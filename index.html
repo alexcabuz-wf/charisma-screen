@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Charisma — Total Soft Leasing Management System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: Tahoma, "MS Sans Serif", Geneva, Arial, sans-serif;
+    font-size: 12px;
+    background: #6a7fa0;
+    color: #000;
+    overflow: hidden;
+  }
+
+  /* ---- desktop backdrop ---- */
+  #desktop {
+    width: 100%;
+    height: 100vh;
+    background: #6a7fa0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  /* ---- app window ---- */
+  #app-window {
+    width: 900px;
+    max-width: 100%;
+    background: #d4d0c8;
+    border: 2px solid #fff;
+    border-right-color: #404040;
+    border-bottom-color: #404040;
+    box-shadow: none;
+  }
+
+  .titlebar {
+    background: linear-gradient(to right, #0a246a, #a6caf0);
+    color: #fff;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 3px 4px 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    letter-spacing: 0.2px;
+  }
+  .titlebar .title-left { display: flex; align-items: center; gap: 5px; }
+  .titlebar .icon-16 {
+    width: 14px; height: 14px; background: #ffd42a; border: 1px solid #7a5c00; display: inline-block;
+  }
+  .titlebar .win-controls { display: flex; gap: 2px; }
+  .titlebar .win-controls span {
+    width: 16px; height: 14px; background: #d4d0c8; border: 1px solid #fff;
+    border-right-color: #404040; border-bottom-color: #404040;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #000; font-family: monospace; line-height: 1;
+  }
+
+  .menubar {
+    background: #d4d0c8;
+    border-bottom: 1px solid #808080;
+    display: flex;
+    padding: 2px 4px;
+    gap: 14px;
+    font-size: 12px;
+  }
+  .menubar span { padding: 2px 4px; }
+  .menubar span:hover { background: #0a246a; color: #fff; }
+
+  .toolbar {
+    background: #d4d0c8;
+    border-bottom: 1px solid #808080;
+    display: flex;
+    gap: 4px;
+    padding: 4px 6px;
+  }
+  .tool-btn {
+    width: 26px; height: 24px;
+    background: #d4d0c8;
+    border: 1px solid #fff;
+    border-right-color: #808080;
+    border-bottom-color: #808080;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .tool-sep { width: 1px; background: #808080; margin: 2px 4px; box-shadow: 1px 0 0 #fff; }
+
+  .tabstrip {
+    display: flex;
+    gap: 2px;
+    padding: 6px 6px 0 8px;
+    background: #d4d0c8;
+  }
+  .tab {
+    padding: 4px 14px;
+    background: #b8b4a8;
+    border: 1px solid #fff;
+    border-right-color: #808080;
+    border-bottom: none;
+    font-size: 12px;
+    color: #555;
+  }
+  .tab.active {
+    background: #d4d0c8;
+    border-bottom: 1px solid #d4d0c8;
+    color: #000;
+    font-weight: bold;
+    position: relative;
+    top: 1px;
+  }
+
+  .content-area {
+    background: #d4d0c8;
+    border-top: 1px solid #fff;
+    padding: 14px 16px 10px 16px;
+  }
+
+  .panel-title {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #808080;
+  }
+
+  fieldset.groupbox {
+    border: 1px solid #808080;
+    border-top-color: #fff;
+    border-left-color: #fff;
+    padding: 10px 12px 12px 12px;
+    margin-bottom: 10px;
+  }
+  fieldset.groupbox legend {
+    font-weight: bold;
+    padding: 0 4px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 130px 1fr 130px 1fr;
+    gap: 8px 10px;
+    align-items: center;
+  }
+  .form-grid label {
+    font-size: 12px;
+    text-align: right;
+    padding-right: 4px;
+  }
+  .form-grid input[type="text"],
+  .form-grid select {
+    width: 100%;
+    font-family: Tahoma, "MS Sans Serif", Geneva, Arial, sans-serif;
+    font-size: 12px;
+    padding: 3px 4px;
+    border: 1px solid #808080;
+    border-top-color: #404040;
+    border-left-color: #404040;
+    background: #fff;
+    height: 22px;
+  }
+  .form-grid input[readonly] { background: #fff; }
+  .form-grid input.filled {
+    background: #fffbcc;
+    transition: background 0.4s ease;
+  }
+  .form-grid .full-row { grid-column: span 3; }
+
+  .row-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .btn {
+    min-width: 84px;
+    padding: 5px 14px;
+    background: #d4d0c8;
+    border: 1px solid #fff;
+    border-right-color: #404040;
+    border-bottom-color: #404040;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn:active {
+    border-color: #404040;
+    border-right-color: #fff;
+    border-bottom-color: #fff;
+  }
+  .btn#save-btn { font-weight: bold; }
+  .btn#decline-btn { color: #6a0000; }
+
+  .statusbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #d4d0c8;
+    border-top: 1px solid #fff;
+    padding: 4px 8px;
+    font-size: 11px;
+    color: #333;
+  }
+  .statusbar .cell {
+    border: 1px solid #808080;
+    border-top-color: #fff;
+    border-left-color: #fff;
+    padding: 2px 8px;
+    background: #d4d0c8;
+    min-width: 160px;
+  }
+  #status-message.ok { color: #0a5c00; font-weight: bold; }
+  #status-message.declined { color: #7a0000; font-weight: bold; }
+
+  /* ---- fake automated cursor for the fallback scripted demo ---- */
+  #fake-cursor {
+    position: fixed;
+    width: 22px;
+    height: 22px;
+    z-index: 9999;
+    pointer-events: none;
+    display: none;
+    transition: left 0.5s ease, top 0.5s ease;
+    filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5));
+  }
+  #fake-cursor svg { width: 100%; height: 100%; }
+  #fake-cursor.clicking { animation: click-pulse 0.25s ease; }
+  @keyframes click-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.8); }
+    100% { transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div id="desktop">
+  <div id="app-window">
+    <div class="titlebar">
+      <div class="title-left">
+        <span class="icon-16"></span>
+        <span>Charisma — Total Soft Leasing Management System [BT Leasing]</span>
+      </div>
+      <div class="win-controls">
+        <span>_</span><span>&#9633;</span><span>&#10005;</span>
+      </div>
+    </div>
+
+    <div class="menubar">
+      <span>File</span>
+      <span>Edit</span>
+      <span>Contracts</span>
+      <span>Reports</span>
+      <span>Window</span>
+      <span>Help</span>
+    </div>
+
+    <div class="toolbar">
+      <div class="tool-btn" title="New">&#128196;</div>
+      <div class="tool-btn" title="Open">&#128194;</div>
+      <div class="tool-btn" title="Save">&#128190;</div>
+      <div class="tool-sep"></div>
+      <div class="tool-btn" title="Print">&#128424;</div>
+      <div class="tool-btn" title="Search">&#128269;</div>
+      <div class="tool-sep"></div>
+      <div class="tool-btn" title="Refresh">&#8635;</div>
+    </div>
+
+    <div class="tabstrip">
+      <div class="tab active">Contract Details</div>
+      <div class="tab">Customer</div>
+      <div class="tab">Documents</div>
+      <div class="tab">Payments</div>
+    </div>
+
+    <div class="content-area">
+      <div class="panel-title">New Lease Contract</div>
+
+      <fieldset class="groupbox">
+        <legend>Client &amp; Vehicle</legend>
+        <div class="form-grid">
+          <label for="f-client">Client:</label>
+          <input type="text" id="f-client" autocomplete="off">
+
+          <label for="f-cnp">CNP:</label>
+          <input type="text" id="f-cnp" autocomplete="off">
+
+          <label for="f-vehicle">Vehicle:</label>
+          <input type="text" id="f-vehicle" class="full-row" autocomplete="off">
+        </div>
+      </fieldset>
+
+      <fieldset class="groupbox">
+        <legend>Contract Terms</legend>
+        <div class="form-grid">
+          <label for="f-term">Contract term (mo):</label>
+          <input type="text" id="f-term" autocomplete="off">
+
+          <label for="f-advance">Advance (lei):</label>
+          <input type="text" id="f-advance" autocomplete="off">
+
+          <label for="f-monthly">Monthly (lei):</label>
+          <input type="text" id="f-monthly" autocomplete="off">
+
+          <label for="f-addons">Add-ons:</label>
+          <input type="text" id="f-addons" autocomplete="off">
+
+          <label for="f-residual">Residual (lei):</label>
+          <input type="text" id="f-residual" autocomplete="off">
+
+          <label for="f-status">Status:</label>
+          <select id="f-status">
+            <option value="">-- Select --</option>
+            <option value="Active">Active</option>
+            <option value="Declined">Declined</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <div class="row-actions">
+        <button class="btn" id="decline-btn" type="button">Decline</button>
+        <button class="btn" id="save-btn" type="button">Save Record</button>
+      </div>
+    </div>
+
+    <div class="statusbar">
+      <div class="cell" id="status-message">Ready.</div>
+      <div class="cell">Contract #: <span id="contract-number-display">—</span></div>
+      <div class="cell">User: bt.integration &nbsp;|&nbsp; 23/07/2026</div>
+    </div>
+  </div>
+</div>
+
+<div id="fake-cursor">
+  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 2 L3 19 L7.5 15.5 L10.5 22 L13.5 20.5 L10.5 14 L17 14 Z" fill="#000" stroke="#fff" stroke-width="1"/>
+  </svg>
+</div>
+
+<script>
+(function () {
+  var fields = {
+    client: document.getElementById('f-client'),
+    cnp: document.getElementById('f-cnp'),
+    vehicle: document.getElementById('f-vehicle'),
+    term: document.getElementById('f-term'),
+    advance: document.getElementById('f-advance'),
+    monthly: document.getElementById('f-monthly'),
+    addons: document.getElementById('f-addons'),
+    residual: document.getElementById('f-residual'),
+  };
+  var statusSelect = document.getElementById('f-status');
+  var saveBtn = document.getElementById('save-btn');
+  var declineBtn = document.getElementById('decline-btn');
+  var statusMsg = document.getElementById('status-message');
+  var contractDisplay = document.getElementById('contract-number-display');
+  var cursor = document.getElementById('fake-cursor');
+
+  function genContractNumber() {
+    var n = Math.floor(1000 + Math.random() * 9000);
+    return 'BTL-2026-' + n;
+  }
+
+  function setFieldValue(input, value) {
+    input.value = value;
+    input.classList.add('filled');
+  }
+
+  saveBtn.addEventListener('click', function () {
+    var num = genContractNumber();
+    contractDisplay.textContent = num;
+    statusMsg.textContent = 'Record saved — Contract #' + num;
+    statusMsg.className = 'ok';
+    window.__lastContractNumber = num;
+    window.dispatchEvent(new CustomEvent('charisma:saved', { detail: { contractNumber: num, status: 'approved' } }));
+  });
+
+  declineBtn.addEventListener('click', function () {
+    statusSelect.value = 'Declined';
+    statusMsg.textContent = 'Application logged as DECLINED.';
+    statusMsg.className = 'declined';
+    contractDisplay.textContent = '—';
+    window.dispatchEvent(new CustomEvent('charisma:saved', { detail: { contractNumber: null, status: 'declined' } }));
+  });
+
+  /* ---------------------------------------------------------------
+   * Fallback scripted auto-fill (used only if live Browser Use is
+   * gated). Call window.fillContract(deal, outcome) or trigger via
+   * postMessage / URL query params. Moves a fake cursor field by
+   * field, types the value, then clicks Save or Decline.
+   * deal = { client, cnp, vehicle, termMonths, advanceAmount, monthly, addOns, residual }
+   * outcome = "approved" | "rejected"
+   * ------------------------------------------------------------- */
+  function centerOf(el) {
+    var r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  function moveCursorTo(el, cb) {
+    cursor.style.display = 'block';
+    var p = centerOf(el);
+    cursor.style.left = (p.x - 2) + 'px';
+    cursor.style.top = (p.y - 2) + 'px';
+    setTimeout(cb, 550);
+  }
+
+  function clickPulse(cb) {
+    cursor.classList.add('clicking');
+    setTimeout(function () {
+      cursor.classList.remove('clicking');
+      cb && cb();
+    }, 250);
+  }
+
+  function typeInto(input, value, cb) {
+    input.value = '';
+    input.classList.remove('filled');
+    var i = 0;
+    function step() {
+      if (i <= value.length) {
+        input.value = value.slice(0, i);
+        i++;
+        setTimeout(step, 28);
+      } else {
+        input.classList.add('filled');
+        cb && cb();
+      }
+    }
+    step();
+  }
+
+  function fillFieldAnimated(input, value, cb) {
+    moveCursorTo(input, function () {
+      clickPulse(function () {
+        typeInto(input, String(value), cb);
+      });
+    });
+  }
+
+  function selectAnimated(select, value, cb) {
+    moveCursorTo(select, function () {
+      clickPulse(function () {
+        select.value = value;
+        cb && cb();
+      });
+    });
+  }
+
+  function clickButtonAnimated(btn, cb) {
+    moveCursorTo(btn, function () {
+      clickPulse(function () {
+        btn.click();
+        cursor.style.display = 'none';
+        cb && cb();
+      });
+    });
+  }
+
+  window.fillContract = function (deal, outcome) {
+    deal = deal || {};
+    var addonsStr = Array.isArray(deal.addOns)
+      ? deal.addOns.map(function (a) { return a.id || a; }).join(', ')
+      : (deal.addOns || '');
+
+    var sequence = [
+      [fields.client, deal.client || ''],
+      [fields.cnp, deal.cnp || ''],
+      [fields.vehicle, deal.vehicle || ''],
+      [fields.term, deal.termMonths != null ? String(deal.termMonths) : ''],
+      [fields.advance, deal.advanceAmount != null ? String(deal.advanceAmount) : ''],
+      [fields.monthly, deal.monthly != null ? String(deal.monthly) : ''],
+      [fields.addons, addonsStr],
+      [fields.residual, deal.residual != null ? String(deal.residual) : ''],
+    ];
+
+    var idx = 0;
+    function next() {
+      if (idx < sequence.length) {
+        var pair = sequence[idx];
+        idx++;
+        fillFieldAnimated(pair[0], pair[1], next);
+      } else {
+        var isApproved = outcome !== 'rejected';
+        selectAnimated(statusSelect, isApproved ? 'Active' : 'Declined', function () {
+          clickButtonAnimated(isApproved ? saveBtn : declineBtn);
+        });
+      }
+    }
+    statusMsg.textContent = 'Processing…';
+    statusMsg.className = '';
+    next();
+  };
+
+  // Trigger via postMessage: { type: 'charisma:fill', deal: {...}, outcome: 'approved'|'rejected' }
+  window.addEventListener('message', function (evt) {
+    var data = evt.data || {};
+    if (data.type === 'charisma:fill') {
+      window.fillContract(data.deal, data.outcome);
+    }
+  });
+
+  // Trigger via URL query params for a standalone demo link, e.g.:
+  // ?auto=1&client=Andrei+Popescu&cnp=1900101123456&vehicle=Skoda+Octavia+1.5+TSI
+  //   &term=48&advance=29000&monthly=2410&addons=Maintenance+pkg&residual=43500&outcome=approved
+  (function autoRunFromQuery() {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('auto') !== '1') return;
+    var deal = {
+      client: params.get('client') || '',
+      cnp: params.get('cnp') || '',
+      vehicle: params.get('vehicle') || '',
+      termMonths: params.get('term') || '',
+      advanceAmount: params.get('advance') || '',
+      monthly: params.get('monthly') || '',
+      addOns: params.get('addons') || '',
+      residual: params.get('residual') || '',
+    };
+    var outcome = params.get('outcome') || 'approved';
+    setTimeout(function () { window.fillContract(deal, outcome); }, 600);
+  })();
+})();
+</script>
+</body>
+</html>
