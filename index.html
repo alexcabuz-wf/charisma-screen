@@ -289,6 +289,9 @@
           <label for="f-cnp">CNP:</label>
           <input type="text" id="f-cnp" autocomplete="off">
 
+          <label for="f-wcp-record">WCP Record ID:</label>
+          <input type="text" id="f-wcp-record" autocomplete="off">
+
           <label for="f-vehicle">Vehicle:</label>
           <input type="text" id="f-vehicle" class="full-row" autocomplete="off">
         </div>
@@ -331,6 +334,7 @@
     <div class="statusbar">
       <div class="cell" id="status-message">Ready.</div>
       <div class="cell">Contract #: <span id="contract-number-display">—</span></div>
+      <div class="cell">WCP Record: <span id="wcp-record-display">—</span></div>
       <div class="cell">User: banking.integration &nbsp;|&nbsp; 23/07/2026</div>
     </div>
   </div>
@@ -371,9 +375,13 @@
     input.classList.add('filled');
   }
 
+  var wcpRecordDisplay = document.getElementById('wcp-record-display');
+  var wcpRecordInput = document.getElementById('f-wcp-record');
+
   saveBtn.addEventListener('click', function () {
     var num = genContractNumber();
     contractDisplay.textContent = num;
+    if (wcpRecordInput.value.trim()) { wcpRecordDisplay.textContent = wcpRecordInput.value.trim(); }
     statusMsg.textContent = 'Record saved — Contract #' + num;
     statusMsg.className = 'ok';
     window.__lastContractNumber = num;
