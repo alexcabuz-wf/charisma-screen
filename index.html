@@ -333,8 +333,8 @@
 
     <div class="statusbar">
       <div class="cell" id="status-message">Ready.</div>
-      <div class="cell">Contract #: <span id="contract-number-display">—</span></div>
-      <div class="cell">WCP Record: <span id="wcp-record-display">—</span></div>
+      <div class="cell">Contract #: <span id="contract-number-display" style="font-weight:bold">—</span></div>
+      <div class="cell">WCP Record ID: <span id="wcp-record-display" style="font-weight:bold">—</span></div>
       <div class="cell">User: banking.integration &nbsp;|&nbsp; 23/07/2026</div>
     </div>
   </div>
@@ -377,6 +377,9 @@
 
   var wcpRecordDisplay = document.getElementById('wcp-record-display');
   var wcpRecordInput = document.getElementById('f-wcp-record');
+  wcpRecordInput.addEventListener('input', function () {
+    wcpRecordDisplay.textContent = wcpRecordInput.value.trim() || '\u2014';
+  });
 
   saveBtn.addEventListener('click', function () {
     var num = genContractNumber();
